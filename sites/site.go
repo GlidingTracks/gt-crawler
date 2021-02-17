@@ -6,4 +6,5 @@ import (
 
 type ChromeSite interface {
 	Crawl(ctx context.Context) (sl []string, err error)
+	CrawledDates() []string
 }

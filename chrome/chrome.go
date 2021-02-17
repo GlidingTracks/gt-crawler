@@ -2,23 +2,23 @@ package chrome
 
 import (
 	"context"
-	"github.com/GlidingTracks/gt-crawler/sites"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
+	"gt-crawler/sites"
 )
 
 type Chrome struct{}
 
-func (ch Chrome) Crawl(ctx context.Context, v []sites.ChromeSite, pipe chan []string) {
-	for i := range v {
+func (ch Chrome) Crawl(ctx context.Context, vs []sites.ChromeSite, pipe chan []string) {
+	for _, v := range vs {
 
-		links, err := v[i].Crawl(ctx)
+		links, err := v.Crawl(ctx)
 		if err != nil {
 			logrus.Error("Error during crawling, err: ", err.Error())
 			return
 		}
 
-		for i := range links {
-			logrus.Info(links[i])
+		for _, l := range links {
+			logrus.Info(l)
 		}
 
 		pipe <- links

@@ -2,17 +2,17 @@ package main
 
 import (
 	"context"
-	"github.com/GlidingTracks/gt-crawler/auth"
-	"github.com/GlidingTracks/gt-crawler/chrome"
-	"github.com/GlidingTracks/gt-crawler/sites"
 	"github.com/MarkusAJacobsen/jConfig-go"
-	"github.com/Sirupsen/logrus"
+	"github.com/chromedp/chromedp"
+	"github.com/sirupsen/logrus"
+	"gt-crawler/auth"
+	"gt-crawler/chrome"
+	"gt-crawler/sites"
 	"sync"
-	"time"
 )
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Hour)
+	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
 	conf, err := getConfig()
@@ -33,7 +33,7 @@ func crawl(ctx context.Context, wg *sync.WaitGroup) (links []string) {
 	defer wg.Done()
 
 	c := &chrome.Chrome{}
-	cSites := []sites.ChromeSite{&sites.XContestChrome{}}
+	cSites := []sites.ChromeSite{sites.NewXContest()}
 	crawlRes := make(chan []string)
 
 	wg.Add(1)

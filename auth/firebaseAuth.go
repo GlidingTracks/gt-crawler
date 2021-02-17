@@ -2,11 +2,11 @@ package auth
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"firebase.google.com/go"
 	"fmt"
-	"github.com/Sirupsen/logrus"
-	"golang.org/x/net/context"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/api/option"
 	"io/ioutil"
 	"net/http"

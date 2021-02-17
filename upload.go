@@ -3,8 +3,8 @@ package main
 import (
 	"bytes"
 	"context"
-	"github.com/GlidingTracks/gt-crawler/auth"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
+	"gt-crawler/auth"
 	"io"
 	"mime/multipart"
 	"net/http"
