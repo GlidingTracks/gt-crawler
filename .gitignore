@@ -1,3 +1,4 @@
+.DS_Store
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -16,3 +17,8 @@
 gt-crawler
 dump.txt
 *.json
+.env
+
+data_files
+data_postgis
+

@@ -1,0 +1,47 @@
+version: "3.7"
+
+services:
+
+  #  crawler:
+  #  build: .
+  #  depends_on:
+  #    - postgis
+  #  restart: always
+  #  volumes:
+  #    - ./data_files:/data
+
+  pgadmin4:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin4
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      PGADMIN_DEFAULT_EMAIL: $PGADMIN_DEFAULT_EMAIL
+      PGADMIN_DEFAULT_PASSWORD: $PGADMIN_DEFAULT_PASSWORD
+      PGADMIN_LISTEN_PORT: 8080
+    volumes:
+        - ./data_pgadmin:/var/lib/pgadmin
+    depends_on:
+        - postgis
+    networks:
+        - net-internal
+
+  postgis:
+    build: ./service_postgis
+    container_name: postgis
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: $DATABASE_USER
+      POSTGRES_PASSWORD: $DATABASE_PASSWORD
+      POSTGRES_DB: $DATABASE_NAME
+    volumes:
+      - ./data_postgis:/var/lib/postgresql/data
+    networks:
+      - net-internal
+
+networks:
+  net-internal:
+    external: true
+
