@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"github.com/GlidingTracks/gt-crawler/auth"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"io"
 	"mime/multipart"
 	"net/http"

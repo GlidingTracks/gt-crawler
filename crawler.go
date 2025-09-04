@@ -6,8 +6,7 @@ import (
 	"github.com/GlidingTracks/gt-crawler/chrome"
 	"github.com/GlidingTracks/gt-crawler/sites"
 	"github.com/MarkusAJacobsen/jConfig-go"
-	"github.com/Sirupsen/logrus"
-	"sync"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -21,22 +20,15 @@ func main() {
 		// CHECK STORAGE AND UPLOAD RESIDUALS
 	}
 
-	var wg sync.WaitGroup
-
-	links := crawl(ctx, &wg)
+	links := crawl(ctx)
 	upload(ctx, conf, links)
-
-	wg.Wait()
 }
 
-func crawl(ctx context.Context, wg *sync.WaitGroup) (links []string) {
-	defer wg.Done()
-
+func crawl(ctx context.Context) (links []string) {
 	c := &chrome.Chrome{}
 	cSites := []sites.ChromeSite{&sites.XContestChrome{}}
 	crawlRes := make(chan []string)
 
-	wg.Add(1)
 	go c.Crawl(ctx, cSites, crawlRes)
 	links = <-crawlRes
 	close(crawlRes)
