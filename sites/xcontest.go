@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/GlidingTracks/gt-crawler/crawlTime"
 	"github.com/MarkusAJacobsen/jConfig-go"
-	"github.com/Sirupsen/logrus"
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
+	"github.com/sirupsen/logrus"
 	"sort"
 	"strings"
 	"time"
@@ -30,19 +30,10 @@ func (xcc XContestChrome) Crawl(ctx context.Context) (sl []string, err error) {
 
 	task := getLinksFromUrl(url, &nodes)
 
-	ins := CreateInstance(ctx)
-	err = ins.Run(ctx, task)
-	if err != nil {
-		return
-	}
+	ctxChrome, cancel := CreateInstance(ctx)
+	defer cancel()
 
-	err = ins.Shutdown(ctx)
-	if err != nil {
-		return
-	}
-
-	err = ins.Wait()
-	if err != nil {
+	if err = chromedp.Run(ctxChrome, task); err != nil {
 		return
 	}
 
@@ -95,17 +86,14 @@ func writeCrawledDateToConfig(date string) (updated bool) {
 }
 
 func visitDetailsPagesAndExtract(urls []string, ctx context.Context) (sl []string, err error) {
-	ins, err := chromedp.New(ctx, chromedp.WithErrorf(logrus.Printf))
-	if err != nil {
-		return
-	}
+	ctxChrome, cancel := chromedp.NewContext(ctx, chromedp.WithLogf(logrus.Printf))
+	defer cancel()
 
 	for i := range urls {
 		var nodes []*cdp.Node
 
 		task := getSourceLink(urls[i], &nodes)
-		err := ins.Run(ctx, task)
-		if err != nil {
+		if err := chromedp.Run(ctxChrome, task); err != nil {
 			logrus.Error(err)
 		}
 
@@ -115,13 +103,6 @@ func visitDetailsPagesAndExtract(urls []string, ctx context.Context) (sl []strin
 			}
 		}
 	}
-
-	err = ins.Shutdown(ctx)
-	if err != nil {
-		return
-	}
-
-	err = ins.Wait()
 
 	return
 }
@@ -184,11 +165,6 @@ func getURL(pagination bool) (url string, date string, err error) {
 	return
 }
 
-func CreateInstance(ctx context.Context) (ins *chromedp.CDP) {
-	ins, err := chromedp.New(ctx, chromedp.WithErrorf(logrus.Printf))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	return ins
+func CreateInstance(ctx context.Context) (context.Context, context.CancelFunc) {
+	return chromedp.NewContext(ctx, chromedp.WithLogf(logrus.Printf))
 }

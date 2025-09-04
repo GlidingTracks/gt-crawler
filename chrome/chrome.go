@@ -3,7 +3,7 @@ package chrome
 import (
 	"context"
 	"github.com/GlidingTracks/gt-crawler/sites"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 type Chrome struct{}
